@@ -1,23 +1,29 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import StartButton from './components/StartButton';
+import Questions from './components/Questions';
 
 export default function App() {
-    //State to tell if you're on the title page or not
+    let [questions, setQuestions] = useState([]);
+    let [quizStart, setQuizStart] = useState(true);
+
+    useEffect(() => {
+        fetch('https://opentdb.com/api.php?amount=5&encode=url3986', {mode: 'cors'})
+            .then(res => res.json())
+            .then(data => setQuestions(data.results));
+    }, []);
 
     const startQuiz = () => {
-        console.log('start quiz!');
+        /* setQuizStart(true); */
+        console.log(questions);
     }
 
     return (
         <div>
-            <h1 className='title-page__header'>
-                Quizzical
-            </h1>
-            <button 
-                className='title-page__start-btn'
-                onClick={startQuiz}
-            >
-                Start Quiz
-            </button>
+            {
+                quizStart === false
+                ? <StartButton startQuiz={startQuiz} />
+                : <Questions questions={questions} />
+            }
         </div>
     );
 }
